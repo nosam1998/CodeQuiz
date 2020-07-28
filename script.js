@@ -36,7 +36,7 @@ function populateHtmlWithQuestion() {
     for (var i = 0; i < answer_arr.length; i++) {
         answer_options[i].innerText = unescape(answer_arr[i]);
     }
-    onQuestionNum += 1;
+
 }
 
 
@@ -47,16 +47,18 @@ function getAnswerText(obj) {
 }
 
 function checkAnswerText(answerText) {
-    if (questionJsonObj[onQuestionNum].correct_answer === answerText) {
+    if (questionJsonObj[onQuestionNum].correct_answer == answerText) {
         // The user answered the question correctly so do the proper logic here
         // Points added are based on the question difficulty
         var pointsToAdd = questionDifficulty.indexOf(questionJsonObj[onQuestionNum].difficulty) + 1
         score += pointsToAdd;
         console.log("Question #" + onQuestionNum + " answered correctly!");
+        onQuestionNum += 1;
         populateHtmlWithQuestion();
     } else {
         // The user answered the question incorrectly so do the proper logic here
         console.log("Question #" + onQuestionNum + " answered incorrectly!");
+        onQuestionNum += 1;
         populateHtmlWithQuestion();
     }
 
