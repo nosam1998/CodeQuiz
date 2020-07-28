@@ -3,24 +3,55 @@ var onQuestionNum = 0; // Increment this every time a question is answered
 var score = 0;
 var questionDifficulty = ["easy", "medium", "hard"];
 var questionCount = 10
+var hideItems = document.getElementsByClassName("hideMe");
+
+var minutes = 3;
+var totalSeconds = 60 * minutes;
+
+var timerElem = document.getElementById("timer");
 
 
-$.getJSON('https://opentdb.com/api.php?amount=' + questionCount + '&category=18&type=multiple', function (data) {
-    // JSON result in `data` variable
-    if (data.response_code === 0) {
-        console.log("Got response!")
-        questionJsonObj = data.results;
-        populateHtmlWithQuestion();
-    } else {
-        alert("Error getting question data from API!")
-    }
-});
+function beginGame() {
+    $.getJSON('https://opentdb.com/api.php?amount=' + questionCount + '&category=18&type=multiple', function (data) {
+        // JSON result in `data` variable
+        if (data.response_code === 0) {
+            console.log("Got response!")
+            questionJsonObj = data.results;
+
+            for (var i = 0; i < hideItems.length; i++) {
+                hideItems[i].style.display = "none";
+            }
+
+            var display = document.querySelector('#time');
+            startTimer(totalSeconds, display);
+
+            populateHtmlWithQuestion();
+        } else {
+            alert("Error getting question data from API!")
+        }
+    });
 
 
-function timer() {
-    // Do countdown timer logic here
 }
 
+
+function startTimer(duration, display) {
+    var timer = duration,
+        minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+        }
+    }, 1000);
+}
 
 function setScoreLocalStorage() {
     // Store the final score of the user with their initials
@@ -51,6 +82,12 @@ function getAnswerText(obj) {
     checkAnswerText(answerText);
 }
 
+
+function resetQAElems() {
+    // Set the Question and answer elements to blank again
+}
+
+
 function checkAnswerText(answerText) {
 
     if (onQuestionNum < questionCount - 1) {
@@ -69,6 +106,10 @@ function checkAnswerText(answerText) {
         populateHtmlWithQuestion();
     } else {
         alert("You got a score of: " + score + "! In a total of " + questionCount + " questions!")
+
+        for (var i = 0; i < hideItems.length; i++) {
+            hideItems[i].style.display = "block";
+        }
     }
 
 }
