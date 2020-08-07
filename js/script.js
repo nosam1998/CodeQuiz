@@ -4,13 +4,18 @@ var questionDifficulty = ["easy", "medium", "hard"];
 var questionCount = 20
 var hideItems = document.getElementsByClassName("hideMe");
 
-var minutes = 3;
+var minutes = 1;
 var totalSeconds = 60 * minutes;
 var timeLeft = totalSeconds;
-var timerElem = document.getElementById("timer");
+var timerRunning = false;
+var timerElem = document.getElementById("time");
+var timerDiv = document.getElementById("timer-div");
+var scoreDiv = document.getElementById("score-div");
+var answer_options = document.getElementsByClassName("answer");
+var question = document.getElementById("question");
+var scoreElem = document.getElementById("score");
 
-
-var questionJsonObj = {
+var questionObj = {
     "results": [{
         "difficulty": "easy",
         "question": "According to the International System of Units, how many bytes are in a kilobyte of RAM?",
@@ -23,7 +28,7 @@ var questionJsonObj = {
         "incorrect_answers": ["Alternative Drive", "Automated Database", "Active Department"]
     }, {
         "difficulty": "easy",
-        "question": "The programming language &#039;Swift&#039; was created to replace what other programming language?",
+        "question": "The programming language 'Swift' was created to replace what other programming language?",
         "correct_answer": "Objective-C",
         "incorrect_answers": ["C#", "Ruby", "C++"]
     }, {
@@ -88,7 +93,7 @@ var questionJsonObj = {
         "incorrect_answers": ["Broken Authentication", "Cross-Site Scripting", "Insecure Direct Object References"]
     }, {
         "difficulty": "hard",
-        "question": "Who invented the &quot;Spanning Tree Protocol&quot;?",
+        "question": "Who invented the 'Spanning Tree Protocol'?",
         "correct_answer": "Radia Perlman",
         "incorrect_answers": ["Paul Vixie", "Vint Cerf", "Michael Roberts"]
     }, {
@@ -114,13 +119,51 @@ var questionJsonObj = {
     }]
 }
 
+
+// Switch from QA game view to menu view and vice-versa
+function switchContent(hide) {
+    if (hide) {
+        // Hide the timerDiv and scoreDiv
+        timerDiv.style.display = "none";
+        scoreDiv.style.display = "none";
+
+        // Hide the question and answers
+        question.style.display = "none"
+        for (var i = 0; i < answer_options.length; i++) {
+            answer_options[i].style.display = "none";
+        }
+
+        // Show the main menu elements again
+        for (var i = 0; i < hideItems.length; i++) {
+            hideItems[i].style.display = "block";
+        }
+    } else {
+        // Show the timerDiv and scoreDiv
+        timerDiv.style.display = "block";
+        scoreDiv.style.display = "block";
+
+        // Show the question and answers
+        question.style.display = "block"
+        for (var i = 0; i < answer_options.length; i++) {
+            answer_options[i].style.display = "block";
+        }
+
+        // Show the main menu elements again
+        for (var i = 0; i < hideItems.length; i++) {
+            hideItems[i].style.display = "none";
+        }
+    }
+
+}
+
+
 // Dynamic Version
 // function beginGame() {
 //     $.getJSON('https://opentdb.com/api.php?amount=' + questionCount + '&category=18&type=multiple', function (data) {
 //         // JSON result in `data` variable
 //         if (data.response_code === 0) {
 //             console.log("Got response!")
-//             questionJsonObj = data.results;
+//             questionObj.results = data.results;
 
 //             for (var i = 0; i < hideItems.length; i++) {
 //                 hideItems[i].style.display = "none";
@@ -129,7 +172,7 @@ var questionJsonObj = {
 //             var display = document.querySelector('#time');
 //             startTimer(totalSeconds, display);
 
-//             populateHtmlWithQuestion();
+//             populateAnswerButtons();
 //         } else {
 //             alert("Error getting question data from API!")
 //         }
@@ -139,45 +182,28 @@ var questionJsonObj = {
 
 // Static Version
 
-function beginGame() {
-    questionJsonObj = questionJsonObj.results;
 
+
+function beginGame() {
     score = 0;
     onQuestionNum = 0;
-
-    for (var i = 0; i < hideItems.length; i++) {
-        hideItems[i].style.display = "none";
-    }
-
-    var display = document.querySelector('#time');
-    startTimer(totalSeconds, display);
-
-    populateHtmlWithQuestion();
-
+    timeLeft = totalSeconds;
+    timerRunning = true;
+    switchContent(false); // Show the questions and answers and hide the menu items
+    populateAnswerButtons();
 }
 
 
-function startTimer(duration, display) {
-    var timer = duration,
-        minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
+function timer() {
+    if (timerRunning) {
+        if (timeLeft === 0) {
+            timerElem.textContent = "0";
+            gameOver();
+        } else {
+            timeLeft -= 1;
+            timerElem.textContent = timeLeft;
         }
-    }, 1000);
-}
-
-
-function timer(startStop) {
-
+    }
 }
 
 
@@ -188,22 +214,20 @@ function setScoreLocalStorage() {
     // Store the final score of the user with their initials
 }
 
-function populateHtmlWithQuestion() {
+function populateAnswerButtons() {
     // Based on the variable onQuestionNum populate the question data
-    var question = document.getElementById("question");
-    var answer_options = document.getElementsByClassName("answer");
-    var scoreElem = document.getElementById("score");
-    var answer_arr = questionJsonObj[onQuestionNum].incorrect_answers;
 
-    answer_arr.push(questionJsonObj[onQuestionNum].correct_answer);
+    var answer_arr = questionObj.results[onQuestionNum].incorrect_answers;
 
-    question.innerText = questionJsonObj[onQuestionNum].question; // Set the #question to the question text
+    answer_arr.push(questionObj.results[onQuestionNum].correct_answer);
+
+    question.innerText = questionObj.results[onQuestionNum].question; // Set the #question to the question text
     scoreElem.innerText = score;
 
     for (var i = 0; i < answer_arr.length; i++) {
-        answer_options[i].innerText = unescape(answer_arr[i]);
+        answer_options[i].textContent = answer_arr[i];
     }
-
+    switchContent(false); // Show the buttons
 }
 
 
@@ -214,34 +238,44 @@ function getAnswerText(obj) {
 }
 
 
-function resetQAElems() {
-    // Set the Question and answer elements to blank again
-}
-
-
 function checkAnswerText(answerText) {
 
     if (onQuestionNum < questionCount - 1) {
-        if (questionJsonObj[onQuestionNum].correct_answer == answerText) {
+        if (questionObj.results[onQuestionNum].correct_answer == answerText) {
             // The user answered the question correctly so do the proper logic here
             // Points added are based on the question difficulty
-            var pointsToAdd = questionDifficulty.indexOf(questionJsonObj[onQuestionNum].difficulty) + 1
+            var pointsToAdd = questionDifficulty.indexOf(questionObj.results[onQuestionNum].difficulty) + 1;
             score += pointsToAdd;
             console.log("Question #" + onQuestionNum + " answered correctly!");
         } else {
+            var timeToSubtract = questionDifficulty.indexOf(questionObj.results[onQuestionNum].difficulty);
+            timeToSubtract = Math.abs(timeToSubtract - 3)
+
+            // Check if the timeToSubtract is greater than timeLeft. If it is then set timeLeft to 0 and end the game
+            if (timeLeft <= timeToSubtract) {
+                timeLeft = 0;
+                gameOver();
+            } else {
+                timeLeft -= timeToSubtract;
+            }
+
             // The user answered the question incorrectly so do the proper logic here
             console.log("Question #" + onQuestionNum + " answered incorrectly!");
         }
 
         onQuestionNum += 1;
-        populateHtmlWithQuestion();
+        populateAnswerButtons();
     } else {
-        clearInterval(intervalFunc);
-        alert("You got a score of: " + score + "! In a total of " + questionCount + " questions!")
-
-        for (var i = 0; i < hideItems.length; i++) {
-            hideItems[i].style.display = "block";
-        }
+        gameOver();
     }
+
+}
+
+
+function gameOver() {
+    timerRunning = false;
+    var onQuestionNumPlusOne = onQuestionNum + 1;
+    alert("You got a score of: " + score + "! In a total of " + onQuestionNumPlusOne + " questions!")
+    switchContent(true);
 
 }
