@@ -1,4 +1,4 @@
-var onQuestionNum = 0; // Increment this every time a question is answered
+var onQuestionNum = 10; // Increment this every time a question is answered
 var score = 0;
 var questionDifficulty = ["easy", "medium", "hard"];
 var questionCount = 20
@@ -14,6 +14,13 @@ var scoreDiv = document.getElementById("score-div");
 var answer_options = document.getElementsByClassName("answer");
 var question = document.getElementById("question");
 var scoreElem = document.getElementById("score");
+
+var menu_block = document.getElementById("menu-block");
+var question_block = document.getElementById("question-block");
+var form_block = document.getElementById("form-block");
+var previousScoresElem = document.getElementById("previousScores");
+var submitBtn = document.getElementById("submitBtn");
+var clearScoresBtn = document.getElementById("clearScores");
 
 var questionObj = {
     "results": [{
@@ -183,13 +190,27 @@ function switchContent(hide) {
 // Static Version
 
 
+function showElem(elem, show) {
+    if (show) {
+        elem.style.display = "block";
+    } else {
+        elem.style.display = "none";
+    }
+}
+
+function initialLoad() {
+    showScores();
+}
+
+window.onload = initialLoad
 
 function beginGame() {
     score = 0;
     onQuestionNum = 0;
     timeLeft = totalSeconds;
     timerRunning = true;
-    switchContent(false); // Show the questions and answers and hide the menu items
+    showElem(menu_block, false); // Hide the menu
+    showElem(question_block, true); // Show the questions and answers and hide the menu items
     populateAnswerButtons();
 }
 
@@ -219,15 +240,16 @@ function populateAnswerButtons() {
 
     var answer_arr = questionObj.results[onQuestionNum].incorrect_answers;
 
-    answer_arr.push(questionObj.results[onQuestionNum].correct_answer);
+    var randIdx = Math.floor(Math.random() * answer_arr.length)
 
+    answer_arr.splice(randIdx, 0, questionObj.results[onQuestionNum].correct_answer);
+    console.log(answer_arr);
     question.innerText = questionObj.results[onQuestionNum].question; // Set the #question to the question text
     scoreElem.innerText = score;
 
     for (var i = 0; i < answer_arr.length; i++) {
         answer_options[i].textContent = answer_arr[i];
     }
-    switchContent(false); // Show the buttons
 }
 
 
@@ -276,6 +298,64 @@ function gameOver() {
     timerRunning = false;
     var onQuestionNumPlusOne = onQuestionNum + 1;
     alert("You got a score of: " + score + "! In a total of " + onQuestionNumPlusOne + " questions!")
-    switchContent(true);
+    showElem(question_block, false);
+    showElem(form_block, true)
+}
 
+function setLocalStorage(key, value) {
+    var temp = getLocalStorage(key);
+    // If there is already a saved key by the same name then append to the current key
+    if (temp !== null) {
+        temp.push(value);
+        window.localStorage.setItem("data", JSON.stringify(temp));
+    } else {
+        var data = [value]
+        window.localStorage.setItem(key, JSON.stringify(data));
+    }
+}
+
+function getLocalStorage(key) {
+    return JSON.parse(window.localStorage.getItem(key));
+}
+
+function clearLocalStorage() {
+    window.localStorage.clear();
+    location.reload();
+}
+
+clearScoresBtn.addEventListener("click", clearLocalStorage)
+
+
+function recordScore() {
+    event.preventDefault();
+
+    var initials = document.getElementById("initials").value;
+
+    var tempData = {
+        "initials": initials,
+        "score": score,
+    }
+
+    setLocalStorage("data", tempData);
+    showElem(form_block, false);
+    showElem(menu_block, true);
+    showScores();
+}
+
+submitBtn.addEventListener("click", recordScore);
+
+function showScores() {
+    var data = getLocalStorage("data");
+    if (data !== null) {
+        for (var i = 0; i < data.length; i++) {
+            var pElem = document.createElement("p");
+
+            pElem.textContent = data[i].initials + ": " + data[i].score;
+            previousScoresElem.appendChild(pElem);
+        }
+    } else {
+        var pElem = document.createElement("p");
+        pElem.textContent = "No scores yet!";
+        previousScoresElem.appendChild(pElem);
+    }
 }

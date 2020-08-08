@@ -1,9 +1,10 @@
-#timer-div {
-    display: none;
+.answer-list {
+    margin-top: 50px;
 }
 
 .answer-list button {
-    display: none;
+    margin: 5px 10px;
+    width: 100%;
 }
 
 .btn-center {
@@ -21,7 +22,24 @@
     border-radius: 4%;
 }
 
-
-#score-div {
+#question-block,
+#form-block {
     display: none;
+}
+
+#previousScores {
+    padding-top: 200px;
+}
+
+#previousScores h2 {
+    padding-bottom: 10px;
+}
+
+.inline-block * {
+    padding-bottom: 15px;
+    display: inline-block;
+}
+
+.inline-block h2 {
+    padding-right: 20px;
 }
