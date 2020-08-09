@@ -43,3 +43,7 @@
 .inline-block h2 {
     padding-right: 20px;
 }
+
+#submit-button {
+    width: 100%;
+}
