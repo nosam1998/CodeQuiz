@@ -3,8 +3,9 @@
 }
 
 .answer-list button {
-    margin: 5px 10px;
+    margin: 5px 0px;
     width: 100%;
+
 }
 
 .btn-center {
@@ -46,4 +47,8 @@
 
 #submit-button {
     width: 100%;
+}
+
+.border-bottom-custom {
+    border-bottom: black solid 3px;
 }

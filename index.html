@@ -37,34 +37,46 @@
             </div>
 
             <div id="question-block" class="row">
-                <div id="timer-div" class="col-2">
-                    <h2 id="time" class="timer-border text-center">Seconds Left: 60</h2>
+                <div id="timer-div" class="col-2 px-2">
+                    <!-- <h2 id="time" class="text-left">Seconds Left: 60</h2> -->
                 </div>
 
-                <div class="col-8 center-div" style="margin: 0 auto;">
-                    <h2 id="question"></h2>
 
-                    <ul class="answer-list list-unstyled">
-                        <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button></li>
-                        <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button></li>
-                        <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button></li>
-                        <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button></li>
-                    </ul>
+                <div class="col-12 col-8-md center-div" style="margin: 0 auto;">
+                    <div class="border-bottom-custom">
+                        <span>
+                            <h2 id="time" class="">Seconds Left: 60</h2>
+                            <h2 id="score" class=""></h2>
+                        </span>
+                    </div>
+                    <div class="my-3 py-3 center">
+                        <h2 id="question"></h2>
+
+                        <ul class="answer-list list-unstyled justify-content-center align-items-center">
+                            <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button>
+                            </li>
+                            <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button>
+                            </li>
+                            <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button>
+                            </li>
+                            <li><button class="answer btn btn-lg btn-primary" onclick="getAnswerText(this)"></button>
+                            </li>
+                        </ul>
+                    </div>
 
                 </div>
 
-                <div id="score-div" class="col-2">
-                    <h2 id="score" class="text-center"></h2>
+                <div id="score-div" class="col-2 px-2 float-right">
+                    <!-- <h2 id="score" class="text-right"></h2> -->
                 </div>
             </div>
 
             <div id="form-block" class="row">
                 <div id="timer-div" class="col-2">
-                    <h2 id="time" class="timer-border text-center">60</h2>
                 </div>
 
                 <div class="col-8 center-div form-inline" style="margin: 0 auto;">
-                    <div class="form-group">
+                    <div class="form-group align-self-center">
                         <label for="initials">Your Initials: </label>
                         <input type="text" class="form-control" id="initials">
                         <button id="submitBtn" class="btn btn-lg btn-primary">Save</button>
