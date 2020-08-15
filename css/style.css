@@ -41,7 +41,7 @@
     display: inline-block;
 }
 
-.inline-block h2 {
+.inline-block h2 { 
     padding-right: 20px;
 }
 
@@ -51,4 +51,8 @@
 
 .border-bottom-custom {
     border-bottom: black solid 3px;
+}
+
+#previousScores p {
+    font-size: 1.5rem !important;
 }
